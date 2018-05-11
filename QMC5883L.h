@@ -17,6 +17,8 @@ public:
   void setRange( int range );
   void setOversampling( int ovl );
   
+  Vector readNormalize(void);
+  
 private:
   int16_t xhigh, xlow;
   int16_t yhigh, ylow;
@@ -25,6 +27,18 @@ private:
   uint8_t rate;
   uint8_t range;
   uint8_t oversampling;
+  
+  Vector v;
 };
 
+#endif
+
+#ifndef VECTOR_STRUCT_H
+#define VECTOR_STRUCT_H
+struct Vector
+{
+    float XAxis;
+    float YAxis;
+    float ZAxis;
+};
 #endif
