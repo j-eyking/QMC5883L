@@ -205,3 +205,13 @@ int QMC5883L::readHeading()
   
   return heading;
 }
+
+Vector HMC5883L::readNormalize(void)
+{
+    mgPerDigit = 0.92f;
+    v.XAxis = ((float)readRegister16(HMC5883L_REG_OUT_X_M) - xOffset) * mgPerDigit;
+    v.YAxis = ((float)readRegister16(HMC5883L_REG_OUT_Y_M) - yOffset) * mgPerDigit;
+    v.ZAxis = (float)readRegister16(HMC5883L_REG_OUT_Z_M) * mgPerDigit;
+
+    return v;
+}
