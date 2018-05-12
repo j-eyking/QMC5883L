@@ -219,5 +219,5 @@ Vector HMC5883L::readNormalize(void)
 void HMC5883L::setOffset(int xo, int yo)
 {
     xOffset = xo;
-    yOffset = yo;
+    //yOffset = yo;
 }
