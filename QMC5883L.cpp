@@ -209,9 +209,9 @@ int QMC5883L::readHeading()
 Vector HMC5883L::readNormalize(void)
 {
     mgPerDigit = 0.92f;
-    v.XAxis = ((float)readRegister16(HMC5883L_REG_OUT_X_M) - xOffset) * mgPerDigit;
-    v.YAxis = ((float)readRegister16(HMC5883L_REG_OUT_Y_M) - yOffset) * mgPerDigit;
-    v.ZAxis = (float)readRegister16(HMC5883L_REG_OUT_Z_M) * mgPerDigit;
+    v.XAxis = ((float)readRegister16(QMC5883L_X_MSB) - xOffset) * mgPerDigit;
+    v.YAxis = ((float)readRegister16(QMC5883L_Y_MSB) - yOffset) * mgPerDigit;
+    v.ZAxis = (float)readRegister16(QMC5883L_Z_MSB) * mgPerDigit;
 
     return v;
 }
