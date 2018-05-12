@@ -206,7 +206,7 @@ int QMC5883L::readHeading()
   return heading;
 }
 
-Vector HMC5883L::readNormalize(void)
+Vector QMC5883L::readNormalize(void)
 {
     mgPerDigit = 0.92f;
     v.XAxis = ((float)readRegister16(QMC5883L_X_MSB) - xOffset) * mgPerDigit;
@@ -216,8 +216,37 @@ Vector HMC5883L::readNormalize(void)
     return v;
 }
 
-void HMC5883L::setOffset(int xo, int yo)
+void QMC5883L::setOffset(int xo, int yo)
 {
     xOffset = xo;
-    //yOffset = yo;
+    yOffset = yo;
+}
+
+// Read word from register
+int16_t QMC5883L::readRegister16(uint8_t reg)
+{
+    int16_t value;
+    Wire.beginTransmission(QMC5883L_ADDR);
+    #if ARDUINO >= 100
+        Wire.write(reg);
+    #else
+        Wire.send(reg);
+    #endif
+    Wire.endTransmission();
+
+    Wire.beginTransmission(QMC5883L_ADDR);
+    Wire.requestFrom(QMC5883L_ADDR, 2);
+    while(!Wire.available()) {};
+    #if ARDUINO >= 100
+        uint8_t vha = Wire.read();
+        uint8_t vla = Wire.read();
+    #else
+        uint8_t vha = Wire.receive();
+        uint8_t vla = Wire.receive();
+    #endif
+    Wire.endTransmission();
+
+    value = vha << 8 | vla;
+
+    return value;
 }
