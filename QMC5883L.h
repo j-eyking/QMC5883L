@@ -1,6 +1,16 @@
 #ifndef QMC5883L_H
 #define QMC5883L_H
 
+#ifndef VECTOR_STRUCT_H
+#define VECTOR_STRUCT_H
+struct Vector
+{
+    float XAxis;
+    float YAxis;
+    float ZAxis;
+};
+#endif
+
 class QMC5883L {
 public:
   void init();
@@ -33,12 +43,3 @@ private:
 
 #endif
 
-#ifndef VECTOR_STRUCT_H
-#define VECTOR_STRUCT_H
-struct Vector
-{
-    float XAxis;
-    float YAxis;
-    float ZAxis;
-};
-#endif
