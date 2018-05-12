@@ -1,6 +1,12 @@
 #ifndef QMC5883L_H
 #define QMC5883L_H
 
+#if ARDUINO >= 100
+#include "Arduino.h"
+#else
+#include "WProgram.h"
+#endif
+
 #ifndef VECTOR_STRUCT_H
 #define VECTOR_STRUCT_H
 struct Vector
@@ -28,6 +34,7 @@ public:
   void setOversampling( int ovl );
   
   Vector readNormalize(void);
+  void  setOffset(int xo, int yo);
   
 private:
   int16_t xhigh, xlow;
@@ -38,9 +45,10 @@ private:
   uint8_t range;
   uint8_t oversampling;
   
+  float mgPerDigit;
   Vector v;
   int xOffset, yOffset;
+  int16_t readRegister16(uint8_t reg);
 };
 
 #endif
-
