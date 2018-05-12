@@ -39,6 +39,7 @@ private:
   uint8_t oversampling;
   
   Vector v;
+  int xOffset, yOffset;
 };
 
 #endif
