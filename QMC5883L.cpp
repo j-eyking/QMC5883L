@@ -145,6 +145,7 @@ void QMC5883L::init() {
   range = QMC5883L_CONFIG_2GAUSS;
   rate = QMC5883L_CONFIG_50HZ;
   mode = QMC5883L_CONFIG_CONT;
+  Wire.begin();
   reset();
 }
 
@@ -154,10 +155,10 @@ int QMC5883L::ready()
   uint8_t status = Wire.read();
   return status & QMC5883L_STATUS_DRDY; 
 }
-
+/*
 int QMC5883L::readRaw( int16_t *x, int16_t *y, int16_t *z, int16_t *t )
 {
-  while(!ready()) {}
+  while(!ready()) {};
 
   if(!read_register(addr,QMC5883L_X_LSB,6)) return 0;
 
@@ -167,35 +168,54 @@ int QMC5883L::readRaw( int16_t *x, int16_t *y, int16_t *z, int16_t *t )
 
   return 1;
 }
+*/
+Vector QMC5883L::readRaw(void)
+{
+  int16_t x, y, z;
+  while(!ready()) {};
+
+  read_register(addr,QMC5883L_X_LSB,6);
+
+  x = Wire.read() | (Wire.read()<<8);
+  y = Wire.read() | (Wire.read()<<8);
+  z = Wire.read() | (Wire.read()<<8);
+
+  v.XAxis = x - xOffset;
+  v.YAxis = y - yOffset;
+  v.ZAxis = z;
+
+  return v;
+}
 
 void QMC5883L::resetCalibration() {
   xhigh = yhigh = 0;
   xlow = ylow = 0;
 }
 
+/*
 int QMC5883L::readHeading()
 {
   int16_t x, y, z, t;
 
   if(!readRaw(&x,&y,&z,&t)) return 0;
 
-  /* Update the observed boundaries of the measurements */
+  // Update the observed boundaries of the measurements
 
   if(x<xlow) xlow = x;
   if(x>xhigh) xhigh = x;
   if(y<ylow) ylow = y;
   if(y>yhigh) yhigh = y;
 
-  /* Bail out if not enough data is available. */
+  // Bail out if not enough data is available.
   
   if( xlow==xhigh || ylow==yhigh ) return 0;
 
-  /* Recenter the measurement by subtracting the average */
+  // Recenter the measurement by subtracting the average
 
   x -= (xhigh+xlow)/2;
   y -= (yhigh+ylow)/2;
 
-  /* Rescale the measurement to the range observed. */
+  // Rescale the measurement to the range observed.
   
   float fx = (float)x/(xhigh-xlow);
   float fy = (float)y/(yhigh-ylow);
@@ -205,48 +225,23 @@ int QMC5883L::readHeading()
   
   return heading;
 }
+*/
 
 Vector QMC5883L::readNormalize(void)
 {
-    mgPerDigit = 0.92f;
-    v.XAxis = ((float)readRegister16(QMC5883L_X_MSB) - xOffset) * mgPerDigit;
-    v.YAxis = ((float)readRegister16(QMC5883L_Y_MSB) - yOffset) * mgPerDigit;
-    v.ZAxis = (float)readRegister16(QMC5883L_Z_MSB) * mgPerDigit;
+	mgPerDigit = 0.92f;
+	Vector vn = readRaw();
+	vn.XAxis -= xOffset;
+	vn.XAxis *= mgPerDigit;
+	vn.YAxis -= yOffset;
+	vn.YAxis *= mgPerDigit;
+	vn.ZAxis *= mgPerDigit;
 
-    return v;
+	return vn;
 }
 
 void QMC5883L::setOffset(int xo, int yo)
 {
     xOffset = xo;
     yOffset = yo;
-}
-
-// Read word from register
-int16_t QMC5883L::readRegister16(uint8_t reg)
-{
-    int16_t value;
-    Wire.beginTransmission(QMC5883L_ADDR);
-    #if ARDUINO >= 100
-        Wire.write(reg);
-    #else
-        Wire.send(reg);
-    #endif
-    Wire.endTransmission();
-
-    Wire.beginTransmission(QMC5883L_ADDR);
-    Wire.requestFrom(QMC5883L_ADDR, 2);
-    while(!Wire.available()) {};
-    #if ARDUINO >= 100
-        uint8_t vha = Wire.read();
-        uint8_t vla = Wire.read();
-    #else
-        uint8_t vha = Wire.receive();
-        uint8_t vla = Wire.receive();
-    #endif
-    Wire.endTransmission();
-
-    value = vha << 8 | vla;
-
-    return value;
 }
