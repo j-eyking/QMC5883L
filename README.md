@@ -81,3 +81,5 @@ Allowable values for `rate` are 10, 50, 100, or 200 Hertz.
 Datasheet on which the code is based:
 http://wiki.epalsite.com/images/7/72/QMC5883L-Datasheet-1.0.pdf
 
+Edit j-eyking:
+These .cpp and .h are a mix of dthain's and jarzebski's files, to make it possible to use jarzebski's code for a  tilt compensated compass (https://github.com/jarzebski/Arduino-HMC5883L/blob/master/HMC5883L_compensation_MPU6050/HMC5883L_compensation_MPU6050.ino) with a chinese QMC5883L (as, for example, found on break-out board GY-271).
