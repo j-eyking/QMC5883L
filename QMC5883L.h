@@ -1,12 +1,12 @@
 #ifndef QMC5883L_H
 #define QMC5883L_H
-
+/*
 #if ARDUINO >= 100
 #include "Arduino.h"
 #else
 #include "WProgram.h"
 #endif
-
+*/
 #ifndef VECTOR_STRUCT_H
 #define VECTOR_STRUCT_H
 struct Vector
@@ -25,7 +25,7 @@ public:
   void reconfig();
   
   int readHeading();
-  int readRaw( int16_t *x, int16_t *y, int16_t *z, int16_t *t );
+  //int readRaw( int16_t *x, int16_t *y, int16_t *z, int16_t *t );
 
   void resetCalibration();
 
@@ -33,6 +33,7 @@ public:
   void setRange( int range );
   void setOversampling( int ovl );
   
+  Vector readRaw(void);
   Vector readNormalize(void);
   void  setOffset(int xo, int yo);
   
