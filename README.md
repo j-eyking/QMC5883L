@@ -7,10 +7,10 @@ In the mentioned above .ino, change
 HMC5883L compass;
 ```
 to
-``
+```
 #include <QMC5883L.h>
 QMC5883L compass;
-``
+```
 comment the lines for initializing the HMC5883L except the compass.setOffset, and replace them by
 
 ```
