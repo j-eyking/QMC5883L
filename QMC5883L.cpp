@@ -1,4 +1,5 @@
 #include <Wire.h>
+#include <math.h>
 #include "QMC5883L.h"
 
 /*
@@ -176,6 +177,39 @@ Vector QMC5883L::readRaw(void)
 void QMC5883L::resetCalibration() {
   xhigh = yhigh = 0;
   xlow = ylow = 0;
+}
+
+int QMC5883L::readHeading()
+{
+  int16_t x, y, z;
+  Vector vh = readRaw();
+  x = vh.XAxis; y = vh.YAxis; z = vh.ZAxis;
+
+  /* Update the observed boundaries of the measurements */
+
+  if(x<xlow) xlow = x;
+  if(x>xhigh) xhigh = x;
+  if(y<ylow) ylow = y;
+  if(y>yhigh) yhigh = y;
+
+  /* Bail out if not enough data is available. */
+  
+  if( xlow==xhigh || ylow==yhigh ) return 0;
+
+  /* Recenter the measurement by subtracting the average */
+
+  x -= (xhigh+xlow)/2;
+  y -= (yhigh+ylow)/2;
+
+  /* Rescale the measurement to the range observed. */
+  
+  float fx = (float)x/(xhigh-xlow);
+  float fy = (float)y/(yhigh-ylow);
+
+  int heading = 180.0*atan2(fy,fx)/M_PI;
+  if(heading<=0) heading += 360;
+  
+  return heading;
 }
 
 Vector QMC5883L::readNormalize(void)
