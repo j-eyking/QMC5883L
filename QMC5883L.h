@@ -16,14 +16,14 @@ public:
   void reset();
   int  ready();
   void reconfig();
+  int readHeading();
   void resetCalibration();
   void setSamplingRate( int rate );
   void setRange( int range );
   void setOversampling( int ovl );
-  
   Vector readRaw(void);
   Vector readNormalize(void);
-  void  setOffset(int xo, int yo);
+  void setOffset(int xo, int yo);
   
 private:
   int16_t xhigh, xlow;
